@@ -24,7 +24,7 @@
                 'minutes_per_unit' => 60,
                 'before_cond' => [
                     function( array $input ){
-                        if( $input['minutes'] > 60 )
+                        if( $input['minutes'] < 60 )
                             throw new \ErrorException('Тариф не доступен');
                     }
                 ]
