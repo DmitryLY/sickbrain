@@ -8,38 +8,56 @@
         private $error = '';
         private $cost = 0;
 
-        public function read_cost(){
+        public function readCost(){
             return $this->cost;
         }    
 
-        public function getCost(){
+        private function beforeCondition(){
 
             foreach( $this->rate->before_cond as $cond ){
 
                 $result = $cond( $this->input );
 
                 if( $result instanceof \ErrorException ){
-                    $this->error = $result->getMessage();
-                    break;
+                    throw $result;
                 }
                     
             }
-            
-            if( isset( $this->input['additionalServices'] ) && $this->input['additionalServices'] )
-                foreach( $this->additional_services as $id => $service ){
 
-                    if( !in_array( $id , $this->input['additionalServices'] ) )
-                        continue;
+        }
 
-                    $result = $service( $this->input );
+        private function costAdditionalServices(){
 
-                    if( $result instanceof \ErrorException ){
-                        $this->error = $result->getMessage();
-                        break;
-                    }
+            if( !isset( $this->input['additionalServices'] ) || !$this->input['additionalServices'] )
+                return;
 
-                    $this->cost += $result;
+
+            foreach( $this->additional_services as $id => $service ){
+
+                if( !in_array( $id , $this->input['additionalServices'] ) )
+                    continue;
+
+                $result = $service( $this->input );
+
+                if( $result instanceof \ErrorException ){
+                    throw $result;
                 }
+
+                $this->cost += $result;
+            }
+
+        }
+
+        public function getCost(){
+
+            try {
+
+                $this->beforeCondition();
+                $this->costAdditionalServices();
+
+            }catch( \ErrorException $error ){
+                $this->error = $error->getMessage();
+            }
 
             if( ! $this->error) {
 
@@ -57,14 +75,14 @@
             
         }
 
-        public function json_out(){
+        public function jsonOut(){
 
             if( $this->error )
                 $out = [ 'error' => $this->error ];
             else
                 $out = [ 'result' => $this->cost ];
 
-            header('Content-type: application/json');
+            header('Content-type: application/json;');
             echo json_encode( $out );
 
         }
@@ -74,7 +92,6 @@
             $this->input = $input;
             $this->rate = $rate;
             $this->additional_services = $additional_services;
-            
 
             foreach ($this->additional_services as &$closure) {
                 $closure = \Closure::bind( $closure , $this , $this );
@@ -94,7 +111,7 @@
 
         public function __get( $name ){
             if( isset( $this->$name ) )
-            return $this->$name;
+                return $this->$name;
         }        
 
         public function __construct( array $input ){
@@ -122,9 +139,9 @@
     ];
 
 
-    print_r( ( new Cost( new Rate( $rates[ $input['rate'] ] ) , $input , $additional_services ) )->getCost()->json_out() );
+    print_r( ( new Cost( new Rate( $rates[ $input['rate'] ] ) , $input , $additional_services ) )->getCost()->jsonOut() );
 
-    //print_r( ( new Cost( new Rate( $rates['student'] ) , $additional_services ) )->getCost( $input )->json_out() );
+    //print_r( ( new Cost( new Rate( $rates['student'] ) , $additional_services ) )->getCost( $input )->jsonOut() );
 
 
     /*$example = [

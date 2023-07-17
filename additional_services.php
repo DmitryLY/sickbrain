@@ -9,7 +9,7 @@ $additional_services = [
         $rate_input = [ 'cost_time_unit' => 15 , 'minutes_per_unit' => 60 ];
         $cost_input = [ 'minutes' => $input['minutes'] ];
 
-        return ( new Cost( new Rate( $rate_input ) , $cost_input ) )->getCost()->read_cost();
+        return ( new Cost( new Rate( $rate_input ) , $cost_input ) )->getCost()->readCost();
 
     }, 
     'driver' => function( array $input ){
