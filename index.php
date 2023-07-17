@@ -139,7 +139,7 @@
     ];
 
 
-    print_r( ( new Cost( new Rate( $rates[ $input['rate'] ] ) , $input , $additional_services ) )->getCost()->jsonOut() );
+    ( new Cost( new Rate( $rates[ $input['rate'] ] ) , $input , $additional_services ) )->getCost()->jsonOut();
 
     //print_r( ( new Cost( new Rate( $rates['student'] ) , $additional_services ) )->getCost( $input )->jsonOut() );
 
