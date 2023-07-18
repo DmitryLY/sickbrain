@@ -11,7 +11,8 @@
         private $cost = 0;
 
         public function readCost(){
-            return $this->cost;
+
+            return $this->error ?: $this->cost;
         }    
 
         private function beforeCondition(){

@@ -17,7 +17,7 @@
 
         public function __construct( string $rate_name = null , array $rate = null  ){
 
-            $rate = $rate ? $rate : ( $rate_name ? ( include ( __DIR__ . '/../src/rates.php' ) )[ $rate_name ] : null );
+            $rate = $rate ? $rate : ( $rate_name ? @( include ( __DIR__ . '/../src/rates.php' ) )[ $rate_name ] : null );
 
             if( !$rate )
                 throw new \ErrorException('Тариф не выбран');
