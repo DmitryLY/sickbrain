@@ -20,7 +20,7 @@
             $rate = $rate ? $rate : ( $rate_name ? ( include ( __DIR__ . '/../src/rates.php' ) )[ $rate_name ] : null );
 
             if( !$rate )
-                throw new \ErrorException();
+                throw new \ErrorException('Тариф не выбран');
 
             foreach( $rate as $k => $v ){
                 if( !isset( $this->$k ) || gettype( $this->$k ) !== gettype( $v ) )

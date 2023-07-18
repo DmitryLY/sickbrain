@@ -46,6 +46,9 @@
 
         public function getCost(){
 
+            if( $this->error )
+                return $this;
+
             try {
 
                 $this->beforeCondition();
@@ -85,12 +88,12 @@
 
         public function __construct( array $input = [] , Rate $rate = null ){
 
-            if( !$rate && isset( $input['rate'] ) && $input['rate'] )
+            if( !$rate )
                 try {
-                    $rate = new Rate($input['rate'], null);
+                    $rate = new Rate( isset( $input['rate'] ) ? $input['rate'] : null , null);
                 }catch( \ErrorException $e){
                     $this->error = $e->getMessage();
-                    return;
+                    return $this;
                 }
 
             $this->input = $input;
