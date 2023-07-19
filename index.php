@@ -9,7 +9,7 @@
     ];
 
     $input = [
-        'rate' => 'daily' , 'km' => 2 , 'minutes' => 1480 , 'driverAge' => 20 , 'additionalServices' => [ 'wi-fi' , 'driver' ]
+        'rate' => 'daily' , 'km' => 2 , 'minutes' => 1480 , 'driverAge' => 26 , 'additionalServices' => [ 'wi-fi' , 'driver' ]
     ];
 
     ( new Cost( $input , null ) )->getCost()->jsonOut();

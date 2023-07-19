@@ -52,7 +52,6 @@
 
             try {
 
-                $this->beforeCondition();
                 $this->costAdditionalServices();
 
             }catch( \ErrorException $error ){
@@ -89,20 +88,24 @@
 
         public function __construct( array $input = [] , Rate $rate = null ){
 
-            if( !$rate )
-                try {
-                    $rate = new Rate( isset( $input['rate'] ) ? $input['rate'] : null , null);
-                }catch( \ErrorException $e){
-                    $this->error = $e->getMessage();
-                    return $this;
+            try {
+
+                $rate = !$rate ? new Rate( isset( $input['rate'] ) ? $input['rate'] : null , null) : $rate ;
+                
+                $this->input = $input;
+                $this->rate = $rate;
+
+                $this->beforeCondition();
+
+                $this->additional_services = include( __DIR__ . '/../src/additional_services.php' );
+                
+                foreach ($this->additional_services as &$closure) {
+                    $closure = \Closure::bind( $closure , $this );
                 }
+                
 
-            $this->input = $input;
-            $this->rate = $rate;
-            $this->additional_services = include( __DIR__ . '/../src/additional_services.php' );
-
-            foreach ($this->additional_services as &$closure) {
-                $closure = \Closure::bind( $closure , $this );
+            }catch( \ErrorException $e){
+                $this->error = $e->getMessage();
             }
 
         }
